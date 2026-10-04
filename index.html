@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Media Interaktif: Sistem Pertidaksamaan Linear Dua Variabel</title>
+
+    <!-- ====== MathJax untuk render notasi matematika ====== -->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['\\(', '\\)']],
+          displayMath: [['\\[', '\\]']],
+        },
+        svg: { fontCache: 'global' },
+      };
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+      async
+    ></script>
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        color: #1e293b;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 28px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        padding: 30px 35px;
+      }
+      h1 {
+        font-size: 2.1rem;
+        font-weight: 700;
+        color: #0f172a;
+        border-left: 8px solid #2563eb;
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      .subtitle {
+        font-size: 1.1rem;
+        color: #475569;
+        margin-bottom: 30px;
+        padding-left: 28px;
+      }
+      h2 {
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 30px 0 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      h2 .badge {
+        background: #2563eb;
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 600;
+        padding: 4px 14px;
+        border-radius: 50px;
+      }
+      h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #334155;
+        margin: 20px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+        color: #334155;
+      }
+      .card {
+        background: #f8fafc;
+        border-radius: 20px;
+        padding: 25px;
+        margin: 20px 0;
+        border: 1px solid #e2e8f0;
+        transition: box-shadow 0.2s;
+      }
+      .card:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+      }
+      .formula {
+        background: #eef2ff;
+        border-left: 6px solid #4f46e5;
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        margin: 15px 0;
+        color: #1e1b4b;
+        overflow-x: auto;
+        text-align: center;
+      }
+      .table-wrap {
+        overflow-x: auto;
+        margin: 15px 0;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 1rem;
+      }
+      th {
+        background: #2563eb;
+        color: white;
+        padding: 12px 16px;
+        text-align: left;
+        font-weight: 600;
+      }
+      td {
+        padding: 10px 16px;
+        border-bottom: 1px solid #e2e8f0;
+        background: white;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover td {
+        background: #f1f5f9;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      @media (max-width: 700px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+        .container {
+          padding: 20px;
+        }
+        h1 {
+          font-size: 1.6rem;
+        }
+      }
+      .interactive-area {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .canvas-container {
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        border: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      canvas {
+        border-radius: 12px;
+        background: #ffffff;
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+      .control-panel {
+        background: #f1f5f9;
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: flex-end;
+        border: 1px solid #e2e8f0;
+      }
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1 1 120px;
+      }
+      .input-group label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .input-group input,
+      .input-group select {
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #cbd5e1;
+        font-size: 1rem;
+        background: white;
+        transition: border 0.2s;
+      }
+      .input-group input:focus,
+      .input-group select:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      }
+      button {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+      }
+      button:hover {
+        background: #1d4ed8;
+      }
+      button:active {
+        transform: scale(0.97);
+      }
+      button.secondary {
+        background: #e2e8f0;
+        color: #1e293b;
+      }
+      button.secondary:hover {
+        background: #cbd5e1;
+      }
+      button.success {
+        background: #16a34a;
+      }
+      button.success:hover {
+        background: #15803d;
+      }
+      .feedback {
+        margin-top: 10px;
+        padding: 12px 18px;
+        border-radius: 12px;
+        font-weight: 500;
+        display: none;
+      }
+      .feedback.correct {
+        background: #dcfce7;
+        color: #166534;
+        border-left: 5px solid #16a34a;
+        display: block;
+      }
+      .feedback.wrong {
+        background: #fee2e2;
+        color: #991b1b;
+        border-left: 5px solid #dc2626;
+        display: block;
+      }
+      .feedback.info {
+        background: #dbeafe;
+        color: #1e40af;
+        border-left: 5px solid #2563eb;
+        display: block;
+      }
+      .step-list {
+        list-style: none;
+        counter-reset: step;
+        padding: 0;
+      }
+      .step-list li {
+        counter-increment: step;
+        padding: 12px 16px 12px 55px;
+        position: relative;
+        background: #f8fafc;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        border: 1px solid #e2e8f0;
+        font-weight: 500;
+      }
+      .step-list li::before {
+        content: counter(step);
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #2563eb;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .highlight {
+        background: #fef9c3;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-weight: 600;
+      }
+      .divider {
+        height: 2px;
+        background: linear-gradient(90deg, #e2e8f0, #ffffff);
+        margin: 30px 0;
+      }
+      .legend {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin: 10px 0;
+        font-size: 0.9rem;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+      }
+      .legend-color.blue {
+        background: rgba(37, 99, 235, 0.25);
+        border: 2px solid #2563eb;
+      }
+      .legend-color.red {
+        background: rgba(220, 38, 38, 0.2);
+        border: 2px dashed #dc2626;
+      }
+      .option-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin: 15px 0;
+      }
+      .option-list label {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        background: white;
+        cursor: pointer;
+        transition: background 0.15s;
+        font-size: 1rem;
+      }
+      .option-list label:hover {
+        background: #f1f5f9;
+      }
+      .option-list input[type='radio'] {
+        margin-top: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📐 Sistem Pertidaksamaan Linear Dua Variabel</h1>
+      <p class="subtitle">Media Pembelajaran Interaktif — Matematika Kelas X</p>
+
+      <!-- ===== BAGIAN 1: TUJUAN ===== -->
+      <div class="card">
+        <h2>🎯 Tujuan Pembelajaran</h2>
+        <p>Setelah mempelajari media ini, peserta didik diharapkan dapat:</p>
+        <ul style="margin-left: 24px; color: #334155">
+          <li>Menjelaskan pengertian pertidaksamaan linear dua variabel.</li>
+          <li>
+            Menentukan daerah penyelesaian pertidaksamaan linear dua variabel.
+          </li>
+          <li>
+            Menggambar grafik pertidaksamaan linear dua variabel pada bidang
+            Cartesius.
+          </li>
+          <li>
+            Menyelesaikan masalah yang berkaitan dengan sistem pertidaksamaan
+            linear dua variabel.
+          </li>
+        </ul>
+      </div>
+
+      <!-- ===== BAGIAN 2: MATERI ===== -->
+      <h2>📘 Materi Singkat <span class="badge">Halaman 25–30</span></h2>
+
+      <div class="card">
+        <h3>1. Pengertian Pertidaksamaan Linear Dua Variabel</h3>
+        <p>
+          Pertidaksamaan linear dua variabel adalah pertidaksamaan yang memuat
+          dua variabel (biasanya \(x\) dan \(y\)) dengan pangkat tertinggi
+          masing-masing variabel adalah 1.
+        </p>
+        <div class="formula">\[ ax + by \le c \]</div>
+        <p>
+          Tanda pertidaksamaan dapat berupa \(<\), \(>\), \(\le\), atau \(\ge\).
+        </p>
+        <p><strong>Contoh:</strong> \(x + 6y \le 15\)</p>
+        <p>
+          Penyelesaiannya bisa lebih dari satu, sehingga digambarkan sebagai
+          <span class="highlight">daerah arsiran</span> pada bidang Cartesius.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>2. Langkah Menentukan Daerah Penyelesaian</h3>
+        <ol class="step-list">
+          <li>
+            Gambar garis persamaan linearnya dengan mengubah tanda
+            pertidaksamaan menjadi tanda sama dengan (\(=\)).
+          </li>
+          <li>
+            Tentukan titik potong terhadap sumbu-\(x\) (saat \(y = 0\)) dan
+            sumbu-\(y\) (saat \(x = 0\)).
+          </li>
+          <li>Hubungkan kedua titik tersebut dengan garis lurus.</li>
+          <li>
+            Gunakan <strong>garis penuh</strong> untuk tanda \(\le\) atau
+            \(\ge\), dan <strong>garis putus-putus</strong> untuk tanda \(<\)
+            atau \(>\).
+          </li>
+          <li>
+            Arsir daerah penyelesaian sesuai aturan pada tabel di bawah ini.
+          </li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h3>3. Tabel Bantuan Daerah Arsiran</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Koefisien-\(y\)</th>
+                <th>Pertidaksamaan</th>
+                <th>Daerah Arsiran</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Positif (+)</td>
+                <td>\(<\) atau \(\le\)</td>
+                <td>Di bawah garis</td>
+              </tr>
+              <tr>
+                <td>Positif (+)</td>
+                <td>\(>\) atau \(\ge\)</td>
+                <td>Di atas garis</td>
+              </tr>
+              <tr>
+                <td>Negatif (−)</td>
+                <td>\(<\) atau \(\le\)</td>
+                <td>Di atas garis</td>
+              </tr>
+              <tr>
+                <td>Negatif (−)</td>
+                <td>\(>\) atau \(\ge\)</td>
+                <td>Di bawah garis</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ===== BAGIAN 3: SIMULASI ===== -->
+      <h2>🧪 Simulasi Interaktif</h2>
+      <p>
+        Masukkan nilai \(a\), \(b\), \(c\), dan pilih tanda pertidaksamaan. Klik
+        <strong>Gambar</strong> untuk melihat grafik dan daerah penyelesaiannya.
+      </p>
+
+      <div class="interactive-area">
+        <div class="control-panel">
+          <div class="input-group">
+            <label for="coefA">Koefisien \(a\)</label>
+            <input type="number" id="coefA" value="2" step="0.5" />
+          </div>
+          <div class="input-group">
+            <label for="coefB">Koefisien \(b\)</label>
+            <input type="number" id="coefB" value="3" step="0.5" />
+          </div>
+          <div class="input-group">
+            <label for="constC">Konstanta \(c\)</label>
+            <input type="number" id="constC" value="6" step="0.5" />
+          </div>
+          <div class="input-group">
+            <label for="sign">Tanda</label>
+            <select id="sign">
+              <option value="<">&lt; (kurang dari)</option>
+              <option value="<=" selected>
+                &le; (kurang dari sama dengan)
+              </option>
+              <option value=">">&gt; (lebih dari)</option>
+              <option value=">=">&ge; (lebih dari sama dengan)</option>
+            </select>
+          </div>
+          <button onclick="drawInteractive()">📊 Gambar</button>
+          <button class="secondary" onclick="resetInteractive()">
+            ↺ Reset
+          </button>
+        </div>
+
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-color blue"></div>
+            <span>Garis pertidaksamaan</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color red"></div>
+            <span>Daerah penyelesaian</span>
+          </div>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="graphCanvas" width="600" height="600"></canvas>
+        </div>
+
+        <div
+          id="interactiveFeedback"
+          class="feedback info"
+          style="display: block"
+        >
+          💡 Masukkan nilai dan klik <strong>Gambar</strong> untuk melihat
+          simulasi.
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ===== BAGIAN 4: LATIHAN ===== -->
+      <h2>✏️ Latihan Soal</h2>
+      <p>
+        Jawablah pertanyaan berikut dengan memilih salah satu opsi yang
+        tersedia.
+      </p>
+
+      <div id="quizContainer">
+        <!-- Soal 1 -->
+        <div class="card">
+          <h3>Soal 1</h3>
+          <p>
+            Tentukan daerah penyelesaian dari pertidaksamaan \(x - 3y \le 3\).
+            Manakah pernyataan yang benar?
+          </p>
+          <div class="option-list">
+            <label
+              ><input type="radio" name="q1" value="A" /> A. Garis penuh,
+              arsiran di atas garis</label
+            >
+            <label
+              ><input type="radio" name="q1" value="B" /> B. Garis penuh,
+              arsiran di bawah garis</label
+            >
+            <label
+              ><input type="radio" name="q1" value="C" /> C. Garis putus-putus,
+              arsiran di atas garis</label
+            >
+            <label
+              ><input type="radio" name="q1" value="D" /> D. Garis putus-putus,
+              arsiran di bawah garis</label
+            >
+          </div>
+          <button class="success" onclick="checkQuiz(1)">Cek Jawaban</button>
+          <div id="feedback1" class="feedback"></div>
+        </div>
+
+        <!-- Soal 2 -->
+        <div class="card">
+          <h3>Soal 2</h3>
+          <p>Daerah penyelesaian dari \(2x + y \ge 4\) adalah ...</p>
+          <div class="option-list">
+            <label
+              ><input type="radio" name="q2" value="A" /> A. Di bawah garis,
+              garis penuh</label
+            >
+            <label
+              ><input type="radio" name="q2" value="B" /> B. Di atas garis,
+              garis penuh</label
+            >
+            <label
+              ><input type="radio" name="q2" value="C" /> C. Di bawah garis,
+              garis putus-putus</label
+            >
+            <label
+              ><input type="radio" name="q2" value="D" /> D. Di atas garis,
+              garis putus-putus</label
+            >
+          </div>
+          <button class="success" onclick="checkQuiz(2)">Cek Jawaban</button>
+          <div id="feedback2" class="feedback"></div>
+        </div>
+
+        <!-- Soal 3 -->
+        <div class="card">
+          <h3>Soal 3</h3>
+          <p>
+            Sistem pertidaksamaan \(x - 3y \le 3\) dan \(x + y \le 3\). Manakah
+            pernyataan yang benar tentang daerah penyelesaiannya?
+          </p>
+          <div class="option-list">
+            <label
+              ><input type="radio" name="q3" value="A" /> A. Kedua garis penuh,
+              arsiran di bawah kedua garis</label
+            >
+            <label
+              ><input type="radio" name="q3" value="B" /> B. Garis \(x - 3y =
+              3\) putus-putus, garis \(x + y = 3\) penuh</label
+            >
+            <label
+              ><input type="radio" name="q3" value="C" /> C. Kedua garis penuh,
+              arsiran di atas kedua garis</label
+            >
+            <label
+              ><input type="radio" name="q3" value="D" /> D. Tidak ada daerah
+              penyelesaian</label
+            >
+          </div>
+          <button class="success" onclick="checkQuiz(3)">Cek Jawaban</button>
+          <div id="feedback3" class="feedback"></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ===== BAGIAN 5: RANGKUMAN ===== -->
+      <h2>📝 Rangkuman</h2>
+      <div class="card">
+        <ul style="margin-left: 20px; color: #334155">
+          <li>
+            Pertidaksamaan linear dua variabel memiliki bentuk umum \(ax + by
+            \le c\) (atau tanda pertidaksamaan lainnya).
+          </li>
+          <li>
+            Daerah penyelesaian digambarkan pada bidang Cartesius sebagai daerah
+            arsiran.
+          </li>
+          <li>
+            Garis penuh digunakan untuk tanda \(\le\) atau \(\ge\), sedangkan
+            garis putus-putus untuk \(<\) atau \(>\).
+          </li>
+          <li>
+            Untuk menentukan daerah arsiran, perhatikan tanda koefisien \(x\)
+            dan tanda pertidaksamaan.
+          </li>
+          <li>
+            Sistem pertidaksamaan linear dua variabel adalah gabungan dari dua
+            atau lebih pertidaksamaan linear dua variabel.
+          </li>
+        </ul>
+        </div>
+          <button>Silahkan kerjakan Soal Latihan di buku cetak halaman 29 dan 30 nomor 1 sampai 4</button>
+          </div>
+      </div>
+
+      <div
+        style="
+          text-align: center;
+          margin-top: 40px;
+          color: #94a3b8;
+          font-size: 0.9rem;
+        "
+      >
+        <p>© 2025 — Media Pembelajaran Matematika Kelas X</p>
+      </div>
+    </div>
+
+    <script>
+      // ====== SIMULASI INTERAKTIF ======
+      const canvas = document.getElementById('graphCanvas');
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      const padding = 60;
+      const scale = 40;
+
+      function toCanvasX(x) {
+        return padding + x * scale;
+      }
+      function toCanvasY(y) {
+        return H - padding - y * scale;
+      }
+
+      function drawAxes() {
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, W, H);
+
+        // Grid
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 0.5;
+        for (let i = -10; i <= 20; i++) {
+          const x = toCanvasX(i);
+          if (x >= padding && x <= W - padding) {
+            ctx.beginPath();
+            ctx.moveTo(x, padding);
+            ctx.lineTo(x, H - padding);
+            ctx.stroke();
+          }
+        }
+        for (let i = -10; i <= 10; i++) {
+          const y = toCanvasY(i);
+          if (y >= padding && y <= H - padding) {
+            ctx.beginPath();
+            ctx.moveTo(padding, y);
+            ctx.lineTo(W - padding, y);
+            ctx.stroke();
+          }
+        }
+
+        // Sumbu
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(padding, toCanvasY(0));
+        ctx.lineTo(W - padding, toCanvasY(0));
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(toCanvasX(0), padding);
+        ctx.lineTo(toCanvasX(0), H - padding);
+        ctx.stroke();
+
+        // Label
+        ctx.fillStyle = '#1e293b';
+        ctx.font = 'bold 16px "Segoe UI", sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('x', W - padding + 20, toCanvasY(0) + 5);
+        ctx.textAlign = 'left';
+        ctx.fillText('y', toCanvasX(0) + 8, padding - 10);
+
+        ctx.font = '12px "Segoe UI", sans-serif';
+        ctx.fillStyle = '#475569';
+        ctx.textAlign = 'center';
+        for (let i = -8; i <= 18; i++) {
+          if (i === 0) continue;
+          const x = toCanvasX(i);
+          if (x > padding && x < W - padding)
+            ctx.fillText(i, x, toCanvasY(0) + 20);
+        }
+        ctx.textAlign = 'right';
+        for (let i = -8; i <= 8; i++) {
+          if (i === 0) continue;
+          const y = toCanvasY(i);
+          if (y > padding && y < H - padding)
+            ctx.fillText(i, toCanvasX(0) - 10, y + 5);
+        }
+        ctx.fillText('0', toCanvasX(0) - 10, toCanvasY(0) + 20);
+      }
+
+      function drawLine(a, b, c, isDashed) {
+        if (a === 0 && b === 0) return;
+        let x1, y1, x2, y2;
+        if (b !== 0) {
+          x1 = -5;
+          y1 = (c - a * x1) / b;
+          x2 = 15;
+          y2 = (c - a * x2) / b;
+        } else {
+          x1 = c / a;
+          y1 = -5;
+          x2 = c / a;
+          y2 = 10;
+        }
+        ctx.save();
+        ctx.strokeStyle = '#2563eb';
+        ctx.lineWidth = 3;
+        if (isDashed) ctx.setLineDash([8, 6]);
+        else ctx.setLineDash([]);
+        ctx.beginPath();
+        ctx.moveTo(toCanvasX(x1), toCanvasY(y1));
+        ctx.lineTo(toCanvasX(x2), toCanvasY(y2));
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function shadeRegion(a, b, c, sign) {
+        const testX = 0,
+          testY = 0;
+        const lhs = a * testX + b * testY;
+        let isTrue = false;
+        switch (sign) {
+          case '<':
+            isTrue = lhs < c;
+            break;
+          case '<=':
+            isTrue = lhs <= c;
+            break;
+          case '>':
+            isTrue = lhs > c;
+            break;
+          case '>=':
+            isTrue = lhs >= c;
+            break;
+        }
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(220, 38, 38, 0.15)';
+
+        let x1, y1, x2, y2;
+        if (Math.abs(b) > 0.001) {
+          x1 = -10;
+          y1 = (c - a * x1) / b;
+          x2 = 25;
+          y2 = (c - a * x2) / b;
+        } else {
+          x1 = c / a;
+          y1 = -10;
+          x2 = c / a;
+          y2 = 15;
+        }
+
+        const linePoints = [];
+        const edges = [
+          { x1: -10, y1: -10, x2: 25, y2: -10 },
+          { x1: 25, y1: -10, x2: 25, y2: 15 },
+          { x1: 25, y1: 15, x2: -10, y2: 15 },
+          { x1: -10, y1: 15, x2: -10, y2: -10 },
+        ];
+
+        function intersect(a, b, c, x1, y1, x2, y2) {
+          const dx = x2 - x1,
+            dy = y2 - y1;
+          const denom = a * dx + b * dy;
+          if (Math.abs(denom) < 0.0001) return null;
+          const t = (c - a * x1 - b * y1) / denom;
+          if (t < 0 || t > 1) return null;
+          return { x: x1 + t * dx, y: y1 + t * dy };
+        }
+
+        for (const edge of edges) {
+          const pt = intersect(a, b, c, edge.x1, edge.y1, edge.x2, edge.y2);
+          if (pt) linePoints.push(pt);
+        }
+
+        if (linePoints.length < 2) {
+          const val = a * 0 + b * 0;
+          let allSatisfied = false;
+          switch (sign) {
+            case '<':
+              allSatisfied = val < c;
+              break;
+            case '<=':
+              allSatisfied = val <= c;
+              break;
+            case '>':
+              allSatisfied = val > c;
+              break;
+            case '>=':
+              allSatisfied = val >= c;
+              break;
+          }
+          if (allSatisfied)
+            ctx.fillRect(padding, padding, W - 2 * padding, H - 2 * padding);
+          ctx.restore();
+          return;
+        }
+
+        const p1 = linePoints[0],
+          p2 = linePoints[1];
+        const cornersList = [
+          { x: -10, y: -10 },
+          { x: 25, y: -10 },
+          { x: 25, y: 15 },
+          { x: -10, y: 15 },
+        ];
+
+        const satisfiedCorners = cornersList.filter((corner) => {
+          const val = a * corner.x + b * corner.y;
+          switch (sign) {
+            case '<':
+              return val < c;
+            case '<=':
+              return val <= c;
+            case '>':
+              return val > c;
+            case '>=':
+              return val >= c;
+          }
+        });
+
+        if (satisfiedCorners.length === 0) {
+          ctx.beginPath();
+          ctx.moveTo(toCanvasX(p1.x), toCanvasY(p1.y));
+          ctx.lineTo(toCanvasX(p2.x), toCanvasY(p2.y));
+          ctx.closePath();
+          ctx.fill();
+        } else {
+          ctx.beginPath();
+          ctx.moveTo(toCanvasX(p1.x), toCanvasY(p1.y));
+          ctx.lineTo(toCanvasX(p2.x), toCanvasY(p2.y));
+          const sortedCorners = satisfiedCorners.slice().sort((a, b) => {
+            const distA = Math.hypot(a.x - p2.x, a.y - p2.y);
+            const distB = Math.hypot(b.x - p2.x, b.y - p2.y);
+            return distA - distB;
+          });
+          for (const corner of sortedCorners) {
+            ctx.lineTo(toCanvasX(corner.x), toCanvasY(corner.y));
+          }
+          ctx.closePath();
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      function drawInteractive() {
+        const a = parseFloat(document.getElementById('coefA').value);
+        const b = parseFloat(document.getElementById('coefB').value);
+        const c = parseFloat(document.getElementById('constC').value);
+        const sign = document.getElementById('sign').value;
+
+        if (isNaN(a) || isNaN(b) || isNaN(c)) {
+          alert('Mohon isi semua nilai dengan angka yang valid.');
+          return;
+        }
+        if (a === 0 && b === 0) {
+          alert('Koefisien a dan b tidak boleh keduanya nol.');
+          return;
+        }
+
+        drawAxes();
+        const isDashed = sign === '<' || sign === '>';
+        shadeRegion(a, b, c, sign);
+        drawLine(a, b, c, isDashed);
+
+        const feedback = document.getElementById('interactiveFeedback');
+        const signText = { '<': '<', '<=': '≤', '>': '>', '>=': '≥' }[sign];
+        const isSolid = sign === '<=' || sign === '>=';
+        feedback.className = 'feedback info';
+        feedback.innerHTML = `
+        📌 Grafik dari <strong>\\(${a}x + ${b}y ${signText} ${c}\\)</strong><br>
+        Garis: <strong>${isSolid ? 'penuh' : 'putus-putus'}</strong> karena tanda ${signText}<br>
+        Daerah arsiran: ${getShadingDescription(a, b, c, sign)}
+      `;
+
+        // Re-render MathJax untuk konten baru
+        if (window.MathJax && MathJax.typesetPromise) {
+          MathJax.typesetPromise([feedback]).catch((err) => console.log(err));
+        }
+      }
+
+      function getShadingDescription(a, b, c, sign) {
+        const testVal = a * 0 + b * 0;
+        let originOK = false;
+        switch (sign) {
+          case '<':
+            originOK = testVal < c;
+            break;
+          case '<=':
+            originOK = testVal <= c;
+            break;
+          case '>':
+            originOK = testVal > c;
+            break;
+          case '>=':
+            originOK = testVal >= c;
+            break;
+        }
+        if (a === 0) {
+          if (b > 0) return originOK ? 'di bawah garis' : 'di atas garis';
+          return originOK ? 'di atas garis' : 'di bawah garis';
+        } else if (b === 0) {
+          if (a > 0) return originOK ? 'di kiri garis' : 'di kanan garis';
+          return originOK ? 'di kanan garis' : 'di kiri garis';
+        } else {
+          const yAt0 = c / b;
+          if (originOK) return yAt0 > 0 ? 'di bawah garis' : 'di atas garis';
+          return yAt0 > 0 ? 'di atas garis' : 'di bawah garis';
+        }
+      }
+
+      function resetInteractive() {
+        document.getElementById('coefA').value = 2;
+        document.getElementById('coefB').value = 3;
+        document.getElementById('constC').value = 6;
+        document.getElementById('sign').value = '<=';
+        drawInteractive();
+      }
+
+      // ====== QUIZ ======
+      const quizAnswers = { 1: 'B', 2: 'B', 3: 'A' };
+      const quizExplanations = {
+        1: 'Pertidaksamaan \\(x - 3y \\le 3\\) memiliki koefisien \\(x\\) positif (1) dan tanda \\(\\le\\), maka daerah arsiran adalah di bawah garis. Karena tanda \\(\\le\\), garis digambar penuh.',
+        2: 'Pertidaksamaan \\(2x + y \\ge 4\\) memiliki koefisien \\(x\\) positif (2) dan tanda \\(\\ge\\), maka daerah arsiran adalah di atas garis. Karena tanda \\(\\ge\\), garis digambar penuh.',
+        3: 'Sistem \\(x - 3y \\le 3\\) dan \\(x + y \\le 3\\). Kedua pertidaksamaan menggunakan tanda \\(\\le\\) sehingga garis digambar penuh. Daerah penyelesaian adalah irisan dari kedua daerah, yaitu di bawah kedua garis.',
+      };
+
+      function checkQuiz(num) {
+        const selected = document.querySelector(
+          `input[name="q${num}"]:checked`
+        );
+        const feedback = document.getElementById(`feedback${num}`);
+
+        if (!selected) {
+          feedback.className = 'feedback wrong';
+          feedback.textContent = '⚠️ Pilih salah satu jawaban terlebih dahulu.';
+          return;
+        }
+
+        const answer = selected.value;
+        const correct = quizAnswers[num];
+
+        if (answer === correct) {
+          feedback.className = 'feedback correct';
+          feedback.innerHTML = `✅ Benar! ${quizExplanations[num]}`;
+        } else {
+          feedback.className = 'feedback wrong';
+          feedback.innerHTML = `❌ Kurang tepat. Jawaban yang benar adalah <strong>${correct}</strong>. ${quizExplanations[num]}`;
+        }
+
+        // Render MathJax pada feedback
+        if (window.MathJax && MathJax.typesetPromise) {
+          MathJax.typesetPromise([feedback]).catch((err) => console.log(err));
+        }
+      }
+
+      // Inisialisasi
+      window.onload = function () {
+        drawInteractive();
+      };
+    </script>
+  </body>
+</html>
